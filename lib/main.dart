@@ -1,3 +1,4 @@
+import 'package:practica1/bloc/counter_bloc.dart';
 import 'package:practica1/cubit/counter_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,12 +13,18 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<CounterBloc>(create: (context) => CounterBloc()),
+        BlocProvider<CounterCubit>(create: (context) => CounterCubit()),
+      ],
+      child: MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home: const MyHomePage(),
       ),
-      home: const MyHomePage(),
     );
   }
 }
@@ -30,10 +37,21 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("Ejemplo Practica 1 BLOC")),
       body: Center(
-        child: BlocBuilder<CounterCubit, int>(
-          builder: (context, state) {
-            return Text('$state');
-          },
+        child: Column(
+          children: [
+            const Text('CounterCubit'),
+            BlocBuilder<CounterCubit, int>(
+              builder: (context, state) {
+                return Text('$state');
+              },
+            ),
+            const Text('CounterBloc:'),
+            BlocBuilder<CounterBloc, CounterState>(
+              builder: (context, state) {
+                return Text(state.email.toString());
+              },
+            ),
+          ],
         ),
       ),
 
@@ -41,15 +59,26 @@ class MyHomePage extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           FloatingActionButton(
-            onPressed: () => context.read<CounterCubit>().increment(),
+            onPressed: () {
+              context.read<CounterBloc>().add(IncrementEvent());
+            }, //=> context.read<CounterCubit>().increment(),
             child: const Icon(Icons.add),
           ),
           SizedBox(height: 8),
           FloatingActionButton(
             onPressed: () {
-              //context.read<CounterCubit>().add(DecrementEvent());
-            },
+              context.read<CounterBloc>().add(DecrementEvent());
+            }, // => context.read<CounterCubit>().decrement(),
             child: const Icon(Icons.remove),
+          ),
+          FloatingActionButton(
+            onPressed: () => context.read<CounterCubit>().increment(),
+            child: const Icon(Icons.access_alarms),
+          ),
+          SizedBox(height: 8),
+          FloatingActionButton(
+            onPressed: () => context.read<CounterCubit>().decrement(),
+            child: const Icon(Icons.access_alarm_sharp),
           ),
         ],
       ),
