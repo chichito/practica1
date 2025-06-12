@@ -1,7 +1,7 @@
-import 'package:practica1/bloc/counter_bloc.dart';
-import 'package:practica1/cubit/counter_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:practica1/bloc/counter_bloc.dart';
+import 'package:practica1/cubit/counter_cubit.dart';
 
 void main() {
   runApp(const MyApp());
@@ -52,6 +52,11 @@ class MyHomePage extends StatelessWidget {
             BlocBuilder<CounterBloc, CounterState>(
               builder: (context, state) {
                 return Text(state.email.toString());
+              },
+            ),
+            BlocBuilder<CounterBloc, CounterState>(
+              builder: (context, state) {
+                return Text(state.counter.toString());
               },
             ),
           ],
